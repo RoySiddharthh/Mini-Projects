@@ -5,12 +5,7 @@ function DataSort() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [sortedData, setSortedData] = useState([
-    {
-      firstName: "",
-      lastName: "",
-    },
-  ]);
+  const [sort, setSort] = useState("");
 
   async function fetchUsers() {
     try {
@@ -35,26 +30,15 @@ function DataSort() {
     fetchUsers();
   }, []);
 
-  //   console.log(data.sort());
   function aTozSort() {
-    // let cpyUsers = [...data];
-    // cpyUsers = cpyUsers.sort((firstUser, secondUser) =>
-    //   firstUser.firstName > secondUser.secondName ? 1 : -1
-    // );
-    // console.log(cpyUsers);
-    // setData(cpyUsers);
-
-    const aTozArray = data.map((item) => item.firstName).sort();
-    setData(...aTozArray);
-    console.log(sortedData);
-
-    // console.log(
-    //   aTozArray.map((item) => {
-    //     setSortedData(...sortedData, item.firstName);
-    //   })
-    // );
-    // setData(aTozArray);
-    // console.log(aTozArray);
+    const aTozArray = data
+      .map((item) => {
+        return item.firstName;
+      })
+      .sort();
+    const myobj = { firstName: "" };
+    const aTozobj = aTozArray.map((item) => ({ ...myobj, firstName: item }));
+    setData(aTozobj);
   }
 
   function ztoaSort() {
@@ -62,9 +46,18 @@ function DataSort() {
       .map((item) => item.firstName)
       .sort()
       .reverse();
-    setData(zToaArray);
-    console.log(zToaArray);
+    const myobj = { firstName: "" };
+    const zToaobj = zToaArray.map((item) => ({ ...myobj, firstName: item }));
+    setData(zToaobj);
   }
+
+  useEffect(() => {
+    if (sort === "Sort A-Z") {
+      aTozSort();
+    } else if (sort === "Sort Z-A") {
+      ztoaSort();
+    }
+  }, [sort]);
 
   if (loading) {
     return (
@@ -84,43 +77,44 @@ function DataSort() {
       </div>
     );
   }
-
-  console.log(sortedData);
   return (
     <React.Fragment>
       <div className="datasort-container">
         <h1>Data Sort</h1>
         <div className="selection-dropdown">
           <label htmlFor="dropdown">Please select a value from dropdown</label>
-          <select id="sortCondition" name="sortCondition" autoFocus>
-            <option defaultValue="" disabled selected>
+          <select
+            id="sortCondition"
+            name="sortCondition"
+            autoFocus
+            value={sort}
+            onChange={(event) => {
+              console.log(event.target.value);
+              setSort(event.target.value);
+            }}
+          >
+            <option value="" disabled selected>
               Please select a value...
             </option>
-            <option
-              value="Sort A-Z"
-              onChange={() => {
-                aTozSort();
-              }}
-            >
-              Sort A-Z
-            </option>
-            <option
-              value="Sort Z-A"
-              onChange={() => {
-                ztoaSort();
-              }}
-            >
-              Sort Z-A
-            </option>
+            <option value="Sort A-Z">Sort A-Z</option>
+            <option value="Sort Z-A">Sort Z-A</option>
           </select>
-          <button
+          {/* <button
             type="button"
             onClick={() => {
               aTozSort();
             }}
           >
             Click Me!
-          </button>
+          </button> */}
+          {/* <button
+            type="button"
+            onClick={() => {
+              ztoaSort();
+            }}
+          >
+            Click Me!
+          </button> */}
         </div>
         <div className="data-container">
           {data.map((item, index) => (
